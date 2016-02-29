@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js"></script>
+	<script type="text/javascript" src="mc.js"></script>
+	<style type="text/css">
+		canvas {
+			outline: 1px solid #fee;
+			opacity: 0.1;
+		}
+		canvas:hover {
+			opacity: 1;
+		}
+
+		.timeline {
+			display: block;
+			margin: 10px;
+			border: 1px solid #eee;
+			box-shadow: 0 0 2px 0 #f4f4f4;
+		}
+		.timeline.c {
+			border-left: 5px solid #f70;
+		}
+		.timeline.n {
+			border-left: 5px solid #f00;
+		}
+		.timeline > .attacker,
+		.timeline > .victim {
+			display: inline-block;
+			
+		}
+	</style>
+</head>
+<body>
+	<script id="pvp_timeline_card" type="x-tmpl-mustache">
+	<div class="timeline {{kill_type}}">
+		<div class="attacker">
+			<p>{{ attacker }}</p>
+		    <canvas data-username="{{attacker}}" data-renderer="head"></canvas>
+		</div>
+		Killed
+		<div class="victim">
+			<p>{{ victim }}</p>
+		    <canvas data-username="{{victim}}" data-renderer="head"></canvas>
+		</div>
+	</div>
+	</script>
+
+	<script type="text/javascript">
+	n = nerd();
+
+	var pvp_timeline_card = document.getElementById('pvp_timeline_card').innerHTML;
+	Mustache.parse(pvp_timeline_card);
+
+	n.get('/api.php?q=timeline', function(status, response) {
+		json_response = JSON.parse(response);
+
+		for(player of json_response) {
+			console.log(player);
+
+			var rendered = Mustache.render(pvp_timeline_card, player);
+			document.body.innerHTML += rendered;
+		}
+
+		n.renderPlayers();
+		console.log(status);
+		console.log(response); 
+	});
+</script>
+</body>
+</html>
